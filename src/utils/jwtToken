@@ -1,0 +1,60 @@
+const jwt = require('jsonwebtoken')
+const { v4: uuidv4 } = require('uuid')
+
+const jwtToken = (req, res, next, loginId, userName, userId, authMode) => {
+    const token = jwt.sign(
+        {
+            loginId: loginId,
+            loginName: userName,
+            userId: userId,
+        },
+        process.env.JWT_KEY,
+        { expiresIn: '24h' }
+    )
+    const newId = uuidv4()
+    req.session.uniqId = newId
+    const userToken = {
+        USER_ID: userId,
+        REFRESH_TOKEN: token,
+    }
+    const response = {
+        status: 'Logged in successfully',
+        userName: userName,
+        image: req.user ? req.user.picture : '',
+    }
+    res.cookie('token', token, {
+        httpOnly: true,
+        secure: false,
+        overwrite: true,
+        maxAge: 86400000,
+    })
+    if (authMode === 1) {
+        return res.status(200).json({ response })
+    }
+    return res.status(200).redirect(process.env.ALLOWED_ORIGINS)
+
+    // models.USERTOKEN.create(userToken)
+    //   .then(() => {
+    //     const response = {
+    //       status: "Logged in successfully",
+    //       userName: userName,
+    //       image: req.user ? req.user.picture : "",
+    //     };
+    //     res.cookie("token", token, {
+    //       httpOnly: true,
+    //       secure: false,
+    //       overwrite: true,
+    //       maxAge: 86400000,
+    //     });
+    //     if (authMode === 1) {
+    //       return res.status(200).json({ response });
+    //     }
+    //     return res.status(200).redirect(process.env.ALLOWED_ORIGINS);
+    //   })
+    //   .catch((error) => {
+    //     next(AppError.internal(error.message));
+    //   });
+}
+module.exports = {
+    jwtToken,
+}
