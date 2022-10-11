@@ -1,4 +1,5 @@
-FROM node:16
+FROM node:lts-alpine3.15
+ENV NODE_VERSION 16.17.1
 
 WORKDIR /usr/src/app
 # Install app dependencies

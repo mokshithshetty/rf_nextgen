@@ -1,0 +1,55 @@
+version: '3'
+
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: docker-mariadb
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    env_file: 
+      - ./mariadb/.env
+    networks:
+      - rf-nextgen
+    volumes:
+      - ./mariadb/config:/etc/mysql/mariadb.conf.d
+      - ./mariadb/mysql:/var/lin/mysql
+    restart: always
+    depends_on:
+      - rfnextgen-app   
+
+  rf-rproxy:
+    container_name: rf-rproxy
+    image: nginx
+    volumes:
+      - ./nginx/rf_nextgen.conf:/etc/nginx/conf.d/rf_nextgen.conf
+    ports:
+      - 80:80
+    networks:
+      - rf-nextgen
+    restart: always
+    depends_on:
+      - rfnextgen-app
+
+  rfnextgen-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nodejsserver
+    ports:
+      - "3001:3001" 
+    networks:
+      - rf-nextgen
+    env_file:
+      - ./.env
+    expose:
+      - "3001"
+    restart: always
+    volumes:
+      - .:/home/node/app
+      - ./node_modules:/home/node/app/node_modules
+     
+networks:
+  rf-nextgen:
+    driver: bridge
