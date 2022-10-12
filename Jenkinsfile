@@ -3,7 +3,6 @@ pipeline {
   
   environment {
     COMMITTER_NAME = sh(script: 'git show -s --pretty=%an', returnStdout: true).trim()                                                     
-    DOCKER_TAG = sh(script: 'npm run rf_nextgen:version --silent', returnStdout: true).trim()
     DOCKER_LOGIN = credentials('DOCKERHUB')
   }
 
