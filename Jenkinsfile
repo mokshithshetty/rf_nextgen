@@ -8,20 +8,21 @@ pipeline {
   }
 
   stages {
-    stage('NPM AUDIT')
+    stage('NPM AUDIT') {
       steps {
         sh 'npm ci';
         sh 'npm audit --audit-level=moderate'
       }
+    }
     
-    
-    stage('TEST')
+    stage('TEST') {
       steps {
         echo "Initiating the tests for the commit ID - ${env.GIT_COMMIT}, made by ${COMMITTER_NAME}"
         echo 'Performing the Sonarqube codecoverage scan...'
       }
+    }
 
-    stage('BUILD')
+    stage('BUILD') {
       environment {
         ENVIRONMENT = 'development'
       }      
@@ -33,17 +34,17 @@ pipeline {
         sh 'echo $DOCKER_LOGIN_PSW | docker login -u $DOCKER_LOGIN_USR --password-stdin'
         echo "Uploading the docker images to the Docker Hub repository..."
         echo "sh docker compose push rf_nextgen-rfnextgen-app mariadb nginx"
-                
+     }
+    }            
     stage('Deploy') {
       environment {
         ENVIRONMENT = 'development'
       }
       steps {
         echo "Deploying the frontend application..."
-
-  }
+      }
+    }
 }
   }
 
-}
-}
+
