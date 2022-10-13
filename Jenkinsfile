@@ -50,6 +50,7 @@ pipeline {
       cleanWs()
       echo 'Cleaning up the docker images...'
       sh 'docker image prune -a --force --filter "until=72h"'
+      sh "docker system prune -a"
     }
   }
 }
