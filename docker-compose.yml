@@ -1,9 +1,9 @@
 version: '3'
 
 services:
-  mariadb:
+  rf-mariadb:
     image: mariadb:latest
-    container_name: docker-mariadb
+    container_name: rf-mariadb
     ports:
       - "3306:3306"
     expose:
@@ -14,10 +14,8 @@ services:
       - rf-nextgen
     volumes:
       - ./mariadb/config:/etc/mysql/mariadb.conf.d
-      - ./mariadb/mysql:/var/lin/mysql
+      - ./mariadb/mysql:/var/lib/mysql
     restart: always
-    depends_on:
-      - rfnextgen-app   
 
   rf-rproxy:
     container_name: rf-rproxy
@@ -29,10 +27,13 @@ services:
     networks:
       - rf-nextgen
     restart: always
-    depends_on:
-      - rfnextgen-app
 
   rfnextgen-app:
+    image: mokshithshetty/rf_nextgen:${ENVIRONMENT}
+    profiles: ["rfnextgen"]
+    tty: true
+    stdin_open: true
+    platform: linux/amd64
     build:
       context: .
       dockerfile: Dockerfile
@@ -49,7 +50,10 @@ services:
     volumes:
       - .:/home/node/app
       - ./node_modules:/home/node/app/node_modules
-     
+    depends_on:
+      - rf-mariadb
+      - rf-rproxy    
+
 networks:
   rf-nextgen:
     driver: bridge
