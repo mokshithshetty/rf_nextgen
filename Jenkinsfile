@@ -32,7 +32,7 @@ pipeline {
         echo "Authenticating with Docker Hub..."
         sh 'echo $DOCKER_LOGIN_PSW | docker login -u $DOCKER_LOGIN_USR --password-stdin'
         echo "Uploading the docker images to the Docker Hub repository..."
-        sh "docker compose push nodejsserver rf-rproxy docker-mariadb"
+        sh "docker compose push mariadb rf-rproxy rfnextgen-app"
      }
     }            
     stage('Deploy') {
