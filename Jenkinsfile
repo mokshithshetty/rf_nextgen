@@ -43,12 +43,14 @@ pipeline {
         echo "Deploying the frontend application..."
       }
     }
-  } 
-  cleanup {
-    echo 'Removing the workspace directory...'
-    cleanWs()
-    echo 'Cleaning up the docker images...'
-    sh 'docker image prune -a --force --filter "until=72h"'
+  }
+  post { 
+    cleanup {
+      echo 'Removing the workspace directory...'
+      cleanWs()
+      echo 'Cleaning up the docker images...'
+      sh 'docker image prune -a --force --filter "until=72h"'
+    }
   }
 }
   
