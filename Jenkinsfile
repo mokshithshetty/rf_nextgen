@@ -28,11 +28,11 @@ pipeline {
       steps {
         echo "Initiating the docker build for the commit ID - ${env.GIT_COMMIT}, made by ${COMMITTER_NAME}, ${ENVIRONMENT} environment, ${env.GIT_BRANCH} branch..."
         echo "Performing the build ..."
-        sh "docker compose up --build -d"
+        sh "docker compose --profile rfnextgen build"
         echo "Authenticating with Docker Hub..."
         sh 'echo $DOCKER_LOGIN_PSW | docker login -u $DOCKER_LOGIN_USR --password-stdin'
         echo "Uploading the docker images to the Docker Hub repository..."
-        sh "docker compose push mariadb rf-rproxy rfnextgen-app"
+        sh "docker compose push rfnextgen-app"
      }
     }            
     stage('Deploy') {
