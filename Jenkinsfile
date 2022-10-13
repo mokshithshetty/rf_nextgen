@@ -28,7 +28,7 @@ pipeline {
       steps {
         echo "Initiating the docker build for the commit ID - ${env.GIT_COMMIT}, made by ${COMMITTER_NAME}, ${ENVIRONMENT} environment, ${env.GIT_BRANCH} branch..."
         echo "Performing the build ..."
-        sh "docker-compose -d up --force-recreate --abort-on-container-exit"
+        sh "/usr/bin/docker-compose up --build -d"
         echo "Authenticating with Docker Hub..."
         sh 'echo $DOCKER_LOGIN_PSW | docker login -u $DOCKER_LOGIN_USR --password-stdin'
         echo "Uploading the docker images to the Docker Hub repository..."
